@@ -108,8 +108,10 @@ func main() {
 	defer outFile.Close()
 
 	compressionType := string(swfHeader.Signature[:])
+
 	var reader io.Reader
-	var writer io.Writer
+	var writer io.WriteCloser
+
 	if compressionType == NO_COMPRESSION {
 		reader = file
 	} else if compressionType == ZLIB_COMPRESSION {
@@ -118,10 +120,7 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		zlibWriter := zlib.NewWriter(outFile)
-		defer zlibWriter.Close()
-		writer = zlibWriter
-
+		writer = zlib.NewWriter(outFile)
 	} else if compressionType == LZMA_COMPRESSION {
 		fmt.Println("Not supported yet")
 		return
@@ -198,6 +197,9 @@ func main() {
 			headerUncompressedLength += uint32(len(tagData))
 		}
 	}
+
+	writer.Close()
+
 	// write out the total uncompressed file size length
 	_, err = outFile.Seek(4, os.SEEK_SET)
 	if err != nil {
