@@ -90,8 +90,8 @@ func main() {
 	}
 
 	pathToSwf := os.Args[1]
-	file, err := os.Open(pathToSwf)
-	defer file.Close()
+	swfFile, err := os.Open(pathToSwf)
+	defer swfFile.Close()
 
 	if err != nil {
 		fmt.Println(err)
@@ -99,7 +99,7 @@ func main() {
 	}
 
 	var swfHeader SwfHeader
-	err = binary.Read(file, binary.LittleEndian, &swfHeader)
+	err = binary.Read(swfFile, binary.LittleEndian, &swfHeader)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -113,9 +113,10 @@ func main() {
 	var writer io.WriteCloser
 
 	if compressionType == NO_COMPRESSION {
-		reader = file
+		reader = swfFile
+		writer = outFile
 	} else if compressionType == ZLIB_COMPRESSION {
-		reader, err = zlib.NewReader(file)
+		reader, err = zlib.NewReader(swfFile)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -197,8 +198,9 @@ func main() {
 			headerUncompressedLength += uint32(len(tagData))
 		}
 	}
-
-	writer.Close()
+	if compressionType != NO_COMPRESSION {
+		writer.Close()
+	}
 
 	// write out the total uncompressed file size length
 	_, err = outFile.Seek(4, os.SEEK_SET)
@@ -208,6 +210,16 @@ func main() {
 	}
 	binary.Write(outFile, binary.LittleEndian, headerUncompressedLength)
 
+	// Permissions of the original file
+	swfFileInfo, err := swfFile.Stat()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	outFile.Chmod(swfFileInfo.Mode())
+	os.Rename(outFile.Name(), pathToSwf)
+
 	fmt.Println("Done, final uncompressed length is:")
 	fmt.Println(headerUncompressedLength)
 }
+
