@@ -104,7 +104,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	outFile, err := ioutil.TempFile("/tmp/", "tele")
+	outFile, err := ioutil.TempFile("", "tele")
 	defer outFile.Close()
 
 	compressionType := string(swfHeader.Signature[:])
