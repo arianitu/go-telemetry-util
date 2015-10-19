@@ -214,8 +214,9 @@ func main() {
 	swfFileInfo, err := swfFile.Stat()
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-
+	
 	outFile.Chmod(swfFileInfo.Mode())
 	os.Rename(outFile.Name(), pathToSwf)
 
