@@ -102,11 +102,13 @@ func main() {
 	err = binary.Read(swfFile, binary.LittleEndian, &swfHeader)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	outFile, err := ioutil.TempFile("", "tele")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	
 	defer outFile.Close()
