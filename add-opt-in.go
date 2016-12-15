@@ -223,8 +223,17 @@ func main() {
 		return
 	}
 	
-	outFile.Chmod(swfFileInfo.Mode())
-	os.Rename(outFile.Name(), pathToSwf)
+	err = outFile.Chmod(swfFileInfo.Mode())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	
+	err = os.Rename(outFile.Name(), pathToSwf)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	fmt.Println("Done, final uncompressed length is:")
 	fmt.Println(headerUncompressedLength)
