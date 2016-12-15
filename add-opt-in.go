@@ -230,7 +230,8 @@ func main() {
 	}
 	
 	outFile.Close()
-
+	swfFile.Close()
+	
 	// remove destination file first (for windows compatibility)
 	err = os.Remove(swfFileInfo.Name())
 	if err != nil {
