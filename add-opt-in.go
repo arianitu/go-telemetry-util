@@ -230,6 +230,14 @@ func main() {
 	}
 	
 	outFile.Close()
+
+	// remove destination file first (for windows compatibility)
+	err = os.Remove(swfFileInfo.Name())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	
 	err = os.Rename(outFile.Name(), pathToSwf)
 	if err != nil {
 		fmt.Println(err)
