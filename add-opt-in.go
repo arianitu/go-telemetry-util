@@ -223,12 +223,13 @@ func main() {
 		return
 	}
 	
-	err = os.Chmod(swfFileInfo.Name(), swfFileInfo.Mode())
+	err = os.Chmod(outFile.Name(), swfFileInfo.Mode())
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	
+	outFile.Close()
 	err = os.Rename(outFile.Name(), pathToSwf)
 	if err != nil {
 		fmt.Println(err)
