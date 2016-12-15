@@ -223,7 +223,7 @@ func main() {
 		return
 	}
 	
-	err = outFile.Chmod(swfFileInfo.Mode())
+	err = os.Chmod(swfFileInfo.Name(), swfFileInfo.Mode())
 	if err != nil {
 		fmt.Println(err)
 		return
